@@ -12,14 +12,14 @@
 #define Y_MAX 2400  // make sure the servos dont hit endstop
 
 #define EL_MIN 20   // limit the minimum elevation, angle up from horizontal
-#define SPEED 20    // limit the moving speed
+#define SPEED 20    // maximum moving speed, speed commands can limit this further
 
 #define BUF_SIZE 16 // max receiving buffer, only needs to fit one command
 
 VarSpeedServo servo_x, servo_y;
 char buf[BUF_SIZE], resp[BUF_SIZE], *ptr;
 int pos=0;
-float req_el=90, req_az=180, rads=0.01745329, degs=57.29578;
+float req_el=90, req_az=180, rads=0.01745329, degs=57.29578, req_speed=SPEED;
 
 void setup() {
   Serial.begin(9600);
@@ -40,8 +40,8 @@ void parse_command(){
       ptr = strtok(NULL, " ");
       req_el = atof(ptr);
     }
-    servo_x.write((sin(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, SPEED);
-    servo_y.write((cos(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, SPEED);
+    servo_x.write((sin(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, req_speed);
+    servo_y.write((cos(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, req_speed);
     Serial.println();
   }else if(buf[0] == 'c' || buf[0] == 'C'){ // get position
     if(buf[1] == '2'){ // az & el
@@ -59,6 +59,15 @@ void parse_command(){
     Serial.println();
   }else if(buf[0] == 'z' || buf[0] == 'Z'){ // N/S center
     Serial.println("N Center"); // fixed
+  }else if(buf[0] == 'x' || buf[0] == 'x'){ // set speed
+    int s=buf[1] - '0';
+    if(s>0 && s<5){
+      req_speed=s*SPEED/4;
+      sprintf(resp,"Speed X%1i", s);
+      Serial.println(resp);
+    }else{
+      Serial.println("?>");
+    }
   }else{
     Serial.println("?>");
   }
