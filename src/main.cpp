@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <VarSpeedServo.h> 
 #include "config.h"
+#define BUF_SIZE 16 // max receiving buffer, only needs to fit one command
 
 // Subset of GS-232B compatible protocol implemented
 

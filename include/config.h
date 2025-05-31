@@ -8,5 +8,3 @@
 
 #define EL_MIN 20   // limit the minimum elevation, angle up from horizontal
 #define SPEED 20    // maximum moving speed, speed commands can limit this further
-
-#define BUF_SIZE 16 // max receiving buffer, only needs to fit one command
