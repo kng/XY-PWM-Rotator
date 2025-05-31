@@ -40,8 +40,8 @@ void parse_command(){
       ptr = strtok(NULL, " ");
       req_el = atof(ptr);
     }
-    servo_x.write((sin(req_az*rads)*cos(req_el*rads)) * 90 + 90, SPEED);
-    servo_y.write((cos(req_az*rads)*cos(req_el*rads)) * 90 + 90, SPEED);
+    servo_x.write((sin(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, SPEED);
+    servo_y.write((cos(req_az*rads)*cos(max(req_el,EL_MIN)*rads)) * 90 + 90, SPEED);
     Serial.println();
   }else if(buf[0] == 'c' || buf[0] == 'C'){ // get position
     if(buf[1] == '2'){ // az & el
